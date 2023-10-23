@@ -1,0 +1,12 @@
+path: /Users/TechG/Desktop/folder/Coding/ObjectRecognitionSurvivalGame/objectTraining/train
+train: images
+val: images
+
+nc: 5
+
+names:
+  0: up
+  1: down
+  2: left
+  3: right
+  4: fist
