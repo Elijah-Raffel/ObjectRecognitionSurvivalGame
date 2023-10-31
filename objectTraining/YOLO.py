@@ -7,8 +7,9 @@ import os
 import time
 
 train = False
-takePics = False
-test = not False
+takePics = not False
+test = False
+print = False
 
 if takePics:
     labels = ["up", "right", "down", "left", "fist"]
@@ -56,12 +57,15 @@ elif test:
                 cls = int(
                     r.boxes.cls[0].item()
                 )  # set cls to the id of the detected item
-                match cls:
-                    case 0:
-                        wsh.SendKeys("w")  # if up then press w
-                    case 1:
-                        wsh.SendKeys("s")  # if down then press s
-                    case 2:
-                        wsh.SendKeys("a")  # if left then press a
-                    case 3:
-                        wsh.SendKeys("d")  # if right then press d
+                if print:
+                    match cls:
+                        case 0:
+                            wsh.SendKeys("w")  # if up then press w
+                        case 1:
+                            wsh.SendKeys("s")  # if down then press s
+                        case 2:
+                            wsh.SendKeys("a")  # if left then press a
+                        case 3:
+                            wsh.SendKeys("d")  # if right then press d
+                        case 4:
+                            wsh.SendKeys(" ")  # if fist then press space
