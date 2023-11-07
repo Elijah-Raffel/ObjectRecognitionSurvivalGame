@@ -87,30 +87,41 @@ bram : blk_mem_gen_0
 --    rw_cycle <= not(rw_cycle);
 --end process; 
 
-update_player: process (wr_en) 
+update_player: process (clk) 
     variable current_pos : std_logic_vector (7 downto 0);
 begin
-    if wr_en'event and wr_en="1" then -- We are updating all the positions
-        case player_dir is 
-            when x"57" => -- ascii for W: MOVE UP
-                bram_en <= '0';
-                wr_en <= "0";
-                address <= "0000";
-                bram_en <= '1';
-                current_pos := bram_out;
-                
-                null;
-            when x"41" => -- ascii for A: MOVE LEFT
-                null;
-            when x"53" => -- ascii for S: MOVE DOWN     
-                null;
-            when x"44" => --ascii for D: MOVE RIGHT
-                null;
-            when others =>
-                null;
-        end case;
+    if rising_edge(clk) then
+        
+        if wr_en="1" then -- We are updating all the positions
+            case player_dir is 
+                when x"57" => -- ascii for W: MOVE UP
+--                    bram_en <= '0';
+--                    wr_en <= "0";
+--                    address <= "0000";
+                    
+                    movement_pos <= std_logic_vector(unsigned(bram_out(3 downto 0)) + 1);
+                    
+                    null;
+                when x"41" => -- ascii for A: MOVE LEFT
+                    movement_pos <= std_logic_vector(unsigned(bram_out(7 downto 4)) - 1);
+                    null;
+                when x"53" => -- ascii for S: MOVE DOWN     
+                    movement_pos <= std_logic_vector(unsigned(bram_out(3 downto 0)) - 1);
+                    null;
+                when x"44" => --ascii for D: MOVE RIGHT
+                    movement_pos <= std_logic_vector(unsigned(bram_out(7 downto 4)) + 1);
+                    null;
+                when others =>
+                    null;
+            end case;
+        else    
+            data_out <= bram_out; 
+        end if;
+        
+        address <=  std_logic_vector(UNSIGNED(address) + 1);
     end if;
 end process; 
 
+bram_en <= '1';
 
 end Behavioral;
