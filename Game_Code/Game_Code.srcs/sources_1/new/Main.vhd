@@ -1,24 +1,3 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date: 10/23/2023 12:39:49 PM
--- Design Name: 
--- Module Name: Main - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -32,11 +11,17 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity Main is
---  Port ( );
+-- 14x14 Playable grid
+-- Take in 15 vectors 1 player, 1 coin, 13 projectiles
+--  Port ( ); 
+
 end Main;
 
 architecture Behavioral of Main is
-
+    -- Check for Collisions, player position with respect to all projectile, minus one life if no more lifes end game
+    --                       player position with coin, plus one score and activate another projectile
+    --                       projectile with coin, skip over
+    -- Once detected a collision, send out a T or F boolean
 begin
 
 
