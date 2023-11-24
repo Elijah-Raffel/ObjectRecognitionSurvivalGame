@@ -120,11 +120,23 @@ end process;
 movement_process: process begin
     for i in 0 to 4 loop
         player_dir <= W; 
+        coin_collected <= '1';
+        wait for 20ns; 
+        coin_collected <= '0';
         wait for 1 ms;
+        coin_collected <= '1';
+        wait for 54ns; 
+        coin_collected <= '0';
         player_dir <= D;
         wait for 1 ms;
+        coin_collected <= '1';
+        wait for 760ns; 
+        coin_collected <= '0';
         player_dir <= S;
         wait for 1 ms;
+        coin_collected <= '1';
+        wait for 500 us; 
+        coin_collected <= '0';
         player_dir <= A;
         wait for 1 ms;
     end loop;
