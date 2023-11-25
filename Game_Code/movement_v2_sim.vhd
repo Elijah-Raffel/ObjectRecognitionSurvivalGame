@@ -21,6 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all; 
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -46,6 +47,7 @@ component Movement_V2 is
     Port ( clk : in STD_LOGIC;
            player_in : in STD_LOGIC_VECTOR (7 downto 0);
            coin_collected : in STD_LOGIC;
+           score_cnt : out unsigned (7 downto 0);
            player_pos : out STD_LOGIC_VECTOR (7 downto 0);
            coin_pos : out STD_LOGIC_VECTOR (7 downto 0);
            proj_1 : out STD_LOGIC_VECTOR (7 downto 0);
@@ -87,6 +89,7 @@ signal clk: std_logic := '0';
 signal coin_collected: std_logic;
 signal player_pos: std_logic_vector (7 downto 0);
 signal coin_pos: std_logic_vector (7 downto 0);
+signal score: unsigned (7 downto 0);
 
 begin
 
@@ -94,6 +97,7 @@ inst_1: Movement_V2 port map(
     clk => clk,
     player_in => player_dir,
     coin_collected => coin_collected,
+    score_cnt => score,
     player_pos => player_pos,
     coin_pos => coin_pos,
     proj_1 => proj1,

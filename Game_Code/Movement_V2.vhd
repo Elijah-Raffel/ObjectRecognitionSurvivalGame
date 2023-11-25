@@ -36,6 +36,7 @@ entity Movement_V2 is
     Port ( clk : in STD_LOGIC;
            player_in : in STD_LOGIC_VECTOR (7 downto 0);
            coin_collected : in STD_LOGIC;
+           score_cnt : out unsigned (7 downto 0);
            player_pos : out STD_LOGIC_VECTOR (7 downto 0);
            coin_pos : out STD_LOGIC_VECTOR (7 downto 0);
            proj_1 : out STD_LOGIC_VECTOR (7 downto 0);
@@ -170,8 +171,8 @@ begin
 
 process (clk) begin
     if rising_edge(clk) then
---        if (time_cntr = to_unsigned(25*1000*1000, time_cntr'length)) then -- this is 1/4 second (250ms)
-          if (time_cntr = to_unsigned(25*1000, time_cntr'length)) then -- this is 1/4000 second (250us)
+        if (time_cntr = to_unsigned(25*1000*1000, time_cntr'length)) then -- this is 1/4 second (250ms)
+--          if (time_cntr = to_unsigned(25*1000, time_cntr'length)) then -- this is 1/4000 second (250us)
             quart_sec <= '1';
             time_cntr <= to_unsigned(0, time_cntr'length);
             rand_cntr <= rand_cntr + 29;  
@@ -339,5 +340,6 @@ proj_11 <= proj11 (7 downto 0);
 proj_12 <= proj12 (7 downto 0);
 proj_13 <= proj13 (7 downto 0);
 proj_14 <= proj14 (7 downto 0);
+score_cnt <= coin_score; 
 
 end Behavioral;

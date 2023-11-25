@@ -1,7 +1,8 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
+--use IEEE.STD_LOGIC_ARITH.ALL;
+--use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use ieee.numeric_std.all;
  
 entity Main is
   port (
@@ -13,17 +14,65 @@ entity Main is
     --o_UART_TX : out std_logic;
     
     -- led
-    led : out std_logic_vector(7 downto 0)
+    led : out std_logic_vector(15 downto 0) -- keeping track of score with led 15-8 for now untilandy is done w/ 7seg
   );
 end entity Main;
  
 architecture RTL of Main is
+
+component Movement_V2 is
+    Port ( clk : in STD_LOGIC;
+           player_in : in STD_LOGIC_VECTOR (7 downto 0);
+           coin_collected : in STD_LOGIC;
+           score_cnt : out unsigned (7 downto 0);
+           player_pos : out STD_LOGIC_VECTOR (7 downto 0);
+           coin_pos : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_1 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_2 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_3 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_4 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_5 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_6 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_7 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_8 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_9 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_10 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_11 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_12 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_13 : out STD_LOGIC_VECTOR (7 downto 0);
+           proj_14 : out STD_LOGIC_VECTOR (7 downto 0));    
+end component;
  
   signal w_RX_DV     : std_logic;
   signal w_RX_Byte   : std_logic_vector(7 downto 0);
+--  signal finished_uart_sig : std_logic_vector (7 downto 0);
   --signal w_TX_Active : std_logic;
   --signal w_TX_Serial : std_logic;
- 
+    signal proj1: std_logic_vector (7 downto 0);
+    signal proj2: std_logic_vector (7 downto 0);
+    signal proj3: std_logic_vector (7 downto 0);
+    signal proj4: std_logic_vector (7 downto 0);
+    
+    signal proj5: std_logic_vector (7 downto 0);
+    signal proj6: std_logic_vector (7 downto 0);
+    signal proj7: std_logic_vector (7 downto 0);
+    signal proj8: std_logic_vector (7 downto 0);
+    
+    signal proj9: std_logic_vector (7 downto 0);
+    signal proj10: std_logic_vector (7 downto 0);
+    signal proj11: std_logic_vector (7 downto 0);
+    signal proj12: std_logic_vector (7 downto 0);
+    
+    signal proj13: std_logic_vector (7 downto 0);
+    signal proj14: std_logic_vector (7 downto 0);
+    
+    signal player_dir: std_logic_vector (7 downto 0);
+--    signal clk: std_logic := '0';
+    signal coin_collected: std_logic;
+    signal player_pos: std_logic_vector (7 downto 0);
+    signal coin_pos: std_logic_vector (7 downto 0);
+    signal score: unsigned (7 downto 0);  
+     
 begin
  
   UART_RX_Inst : entity work.UART_RX
@@ -35,10 +84,33 @@ begin
       o_RX_DV     => w_RX_DV,
       o_RX_Byte   => w_RX_Byte);
       
+    MOVE_BOX: Movement_V2 port map(
+        clk => clk,
+        player_in => player_dir,
+        coin_collected => coin_collected,
+        score_cnt => score,
+        player_pos => player_pos,
+        coin_pos => coin_pos,
+        proj_1 => proj1,
+        proj_2 => proj2,
+        proj_3 => proj3,
+        proj_4 => proj4,
+        proj_5 => proj5,
+        proj_6 => proj6,
+        proj_7 => proj7,
+        proj_8 => proj8,
+        proj_9 => proj9,
+        proj_10 => proj10,
+        proj_11 => proj11,
+        proj_12 => proj12,
+        proj_13 => proj13,
+        proj_14 => proj14
+    );      
+      
   -- update leds when new data is taken in
       LED_Display_Process: process(w_RX_Byte)
   begin
-        led <= w_RX_Byte;
+        led (7 downto 0) <= w_RX_Byte;
   end process LED_Display_Process;       
  
  -- w = 0111 0111
@@ -62,4 +134,15 @@ begin
  
 --  -- Drive UART line high when transmitter is not active
 --  o_UART_TX <= w_TX_Serial when w_TX_Active = '1' else '1';
+
+player_move_input: process (w_RX_DV)
+begin
+    if w_RX_DV = '1' then
+        player_dir <= w_RX_byte; -- taking WASD string and inputting into move_box
+    end if;
+end process;
+
+led (15 downto 8) <= std_logic_vector(score); -- this just outputs the current score in bit form to the leds
+
+
 end architecture RTL;
