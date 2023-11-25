@@ -13,16 +13,15 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity Collision is
 -- Total Grid: 16x16
 -- 14x14 Playable grid (1 to 14), Row and Column 0 and 15 are unplayable(outside grid).
--- Take in 15 vectors, 1 player, 1 coin, 13 projectiles.
--- Game with max at 13 projectiles.
--- Keep a life counter and score counter. Use seven seg on FPGA to display lives and score.
+-- Take in 15 vectors, 1 player, 1 coin, 14 projectiles.
+-- Game with max at 14 projectiles.
+-- Keep a life counter.  Use seven seg on FPGA to display lives and score.
 -- Left seven seg used for lives, Right two seven seg used for score.
 
     Port ( clk : in STD_LOGIC;
         projectile_collision : out STD_LOGIC;
         coin_collected : out STD_LOGIC;
         life_counter : out INTEGER range 0 to 9;
-        score_counter : out INTEGER range 0 to 99;
            
         player_pos : in STD_LOGIC_VECTOR (7 downto 0);
         coin_pos : in STD_LOGIC_VECTOR (7 downto 0);
@@ -96,7 +95,6 @@ begin
         if rising_edge(clk) then
             -- Coin Collision Logic
             if coin_collision then
-                score_count <= score_count + 1;  -- Increase score on coin collection
                 coin_collected <= '1';  -- Signal that a coin is collected
             else
                 coin_collected <= '0';
@@ -114,6 +112,5 @@ begin
     
     -- Update signals at the end of the process
     life_counter <= life_count;
-    score_counter <= score_count;
     
 end Behavioral;
