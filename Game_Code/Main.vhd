@@ -42,6 +42,31 @@ component Movement_V2 is
            proj_13 : out STD_LOGIC_VECTOR (7 downto 0);
            proj_14 : out STD_LOGIC_VECTOR (7 downto 0));    
 end component;
+
+component Collision
+    Port ( clk : in STD_LOGIC;
+        projectile_collision : out STD_LOGIC;
+        coin_collected : out STD_LOGIC;
+        life_counter : out INTEGER range 0 to 9;
+           
+        player_pos : in STD_LOGIC_VECTOR (7 downto 0);
+        coin_pos : in STD_LOGIC_VECTOR (7 downto 0);
+           
+        proj_1 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_2 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_3 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_4 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_5 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_6 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_7 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_8 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_9 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_10 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_11 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_12 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_13 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_14 : in STD_LOGIC_VECTOR (7 downto 0));
+end component;
  
   signal w_RX_DV     : std_logic;
   signal w_RX_Byte   : std_logic_vector(7 downto 0);
