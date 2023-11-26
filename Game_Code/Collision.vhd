@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL; 
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -21,7 +22,7 @@ entity Collision is
     Port ( clk : in STD_LOGIC;
         projectile_collision : out STD_LOGIC;
         coin_collected : out STD_LOGIC;
-        life_counter : out INTEGER range 0 to 9;
+        life_counter : out unsigned (3 downto 0);
            
         player_pos : in STD_LOGIC_VECTOR (7 downto 0);
         coin_pos : in STD_LOGIC_VECTOR (7 downto 0);
@@ -46,8 +47,7 @@ end Collision;
 architecture Behavioral of Collision is
     signal proj_collision : BOOLEAN := FALSE;
     signal coin_collision : BOOLEAN := FALSE;
-    signal life_count : INTEGER := 9;   -- Initial life count
-    signal score_count : INTEGER := 0;  -- Initial score
+    signal life_count: unsigned (3 downto 0) := to_unsigned(0, 4);
 
     signal proj1_collision : BOOLEAN := FALSE;
     signal proj2_collision : BOOLEAN := FALSE;

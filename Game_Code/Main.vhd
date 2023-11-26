@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 --use IEEE.STD_LOGIC_ARITH.ALL;
 --use IEEE.STD_LOGIC_UNSIGNED.ALL;
-use ieee.numeric_std.all;
+use IEEE.NUMERIC_STD.ALL; 
  
 entity Main is
   port (
@@ -45,32 +45,42 @@ end component;
 
 component Collision
     Port ( clk : in STD_LOGIC;
-        projectile_collision : out STD_LOGIC;
-        coin_collected : out STD_LOGIC;
-        life_counter : out INTEGER range 0 to 9;
+           projectile_collision : out STD_LOGIC;
+           coin_collected : out STD_LOGIC;
+           life_counter : out unsigned (3 downto 0);
            
-        player_pos : in STD_LOGIC_VECTOR (7 downto 0);
-        coin_pos : in STD_LOGIC_VECTOR (7 downto 0);
+           player_pos : in STD_LOGIC_VECTOR (7 downto 0);
+           coin_pos : in STD_LOGIC_VECTOR (7 downto 0);
            
-        proj_1 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_2 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_3 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_4 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_5 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_6 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_7 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_8 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_9 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_10 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_11 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_12 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_13 : in STD_LOGIC_VECTOR (7 downto 0);
-        proj_14 : in STD_LOGIC_VECTOR (7 downto 0));
+           proj_1 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_2 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_3 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_4 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_5 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_6 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_7 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_8 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_9 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_10 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_11 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_12 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_13 : in STD_LOGIC_VECTOR (7 downto 0);
+           proj_14 : in STD_LOGIC_VECTOR (7 downto 0));
+end component;
+
+component Seven_Seg
+    Port ( clk : in std_logic;
+           anode : out std_logic_vector (3 downto 0);
+           cathode : out std_logic_vector (6 downto 0);
+        
+           life_counter : in unsigned(3 downto 0);
+           score_counter : in unsigned(7 downto 0)
+    );
 end component;
  
-  signal w_RX_DV     : std_logic;
-  signal w_RX_Byte   : std_logic_vector(7 downto 0);
---  signal finished_uart_sig : std_logic_vector (7 downto 0);
+    signal w_RX_DV     : std_logic;
+    signal w_RX_Byte   : std_logic_vector(7 downto 0);
+  --signal finished_uart_sig : std_logic_vector (7 downto 0);
   --signal w_TX_Active : std_logic;
   --signal w_TX_Serial : std_logic;
     signal proj1: std_logic_vector (7 downto 0);
@@ -96,7 +106,12 @@ end component;
     signal coin_collected: std_logic;
     signal player_pos: std_logic_vector (7 downto 0);
     signal coin_pos: std_logic_vector (7 downto 0);
+    
     signal score: unsigned (7 downto 0);  
+    signal life: unsigned (3 downto 0);
+    
+    signal anode : std_logic_vector (3 downto 0);
+    signal cathode : std_logic_vector (6 downto 0);
      
 begin
  
@@ -130,8 +145,42 @@ begin
         proj_12 => proj12,
         proj_13 => proj13,
         proj_14 => proj14
-    );      
-      
+    );
+    
+    Collision_Inst : Collision port map (
+        clk => clk,
+        projectile_collision => open,  -- Connect this to your actual signal
+        coin_collected => coin_collected,
+        life_counter => open,  -- Connect this to your actual signal
+
+        player_pos => player_pos,
+        coin_pos => coin_pos,
+
+        proj_1 => proj1,
+        proj_2 => proj2,
+        proj_3 => proj3,
+        proj_4 => proj4,
+        proj_5 => proj5,
+        proj_6 => proj6,
+        proj_7 => proj7,
+        proj_8 => proj8,
+        proj_9 => proj9,
+        proj_10 => proj10,
+        proj_11 => proj11,
+        proj_12 => proj12,
+        proj_13 => proj13,
+        proj_14 => proj14
+    );
+    
+    SevenSeg_Inst : Seven_Seg port map(
+        clk => clk,
+        score_counter => score,
+        life_counter => life,
+        anode => anode,
+        cathode => cathode
+    );
+
+          
   -- update leds when new data is taken in
       LED_Display_Process: process(w_RX_Byte)
   begin
