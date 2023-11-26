@@ -25,8 +25,10 @@ component Movement_V2 is
            player_in : in STD_LOGIC_VECTOR (7 downto 0);
            coin_collected : in STD_LOGIC;
            score_cnt : out unsigned (7 downto 0);
+           
            player_pos : out STD_LOGIC_VECTOR (7 downto 0);
            coin_pos : out STD_LOGIC_VECTOR (7 downto 0);
+           
            proj_1 : out STD_LOGIC_VECTOR (7 downto 0);
            proj_2 : out STD_LOGIC_VECTOR (7 downto 0);
            proj_3 : out STD_LOGIC_VECTOR (7 downto 0);
@@ -74,8 +76,7 @@ component Seven_Seg
            cathode : out std_logic_vector (6 downto 0);
         
            life_counter : in unsigned(3 downto 0);
-           score_counter : in unsigned(7 downto 0)
-    );
+           score_counter : in unsigned(7 downto 0));
 end component;
  
     signal w_RX_DV     : std_logic;
@@ -102,17 +103,19 @@ end component;
     signal proj14: std_logic_vector (7 downto 0);
     
     signal player_dir: std_logic_vector (7 downto 0);
---    signal clk: std_logic := '0';
+  --signal clk: std_logic := '0';
     signal coin_collected: std_logic;
+    signal projectile_collision: std_logic;
     signal player_pos: std_logic_vector (7 downto 0);
     signal coin_pos: std_logic_vector (7 downto 0);
+   
     
     signal score: unsigned (7 downto 0);  
     signal life: unsigned (3 downto 0);
     
-    signal anode : std_logic_vector (3 downto 0);
-    signal cathode : std_logic_vector (6 downto 0);
-     
+    signal an : std_logic_vector (3 downto 0);
+    signal seg : std_logic_vector (6 downto 0);
+    
 begin
  
   UART_RX_Inst : entity work.UART_RX
@@ -149,9 +152,9 @@ begin
     
     Collision_Inst : Collision port map (
         clk => clk,
-        projectile_collision => open,  -- Connect this to your actual signal
-        coin_collected => coin_collected,
-        life_counter => open,  -- Connect this to your actual signal
+        projectile_collision => projectile_collision,
+        coin_collected => coin_collected, 
+        life_counter => life,
 
         player_pos => player_pos,
         coin_pos => coin_pos,
@@ -176,11 +179,10 @@ begin
         clk => clk,
         score_counter => score,
         life_counter => life,
-        anode => anode,
-        cathode => cathode
+        anode => an,
+        cathode => seg
     );
-
-          
+ 
   -- update leds when new data is taken in
       LED_Display_Process: process(w_RX_Byte)
   begin
