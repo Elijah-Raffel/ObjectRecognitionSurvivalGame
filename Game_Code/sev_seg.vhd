@@ -1,31 +1,33 @@
 library IEEE;
-use IEEE.STD_LOGIC_1164.all;
-use IEEE.NUMERIC_STD.ALL; 
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
 
 entity sev_seg is
     port (
-        clk : in std_logic;
-        anode : out std_logic_vector (3 downto 0);
-        cathode : out std_logic_vector (6 downto 0);
+        clk : in std_logic; -- Clock on Basys 3 FPGA board
+        rst : in std_logic; -- Reset
+        din : in unsigned(15 downto 0); -- Hexadecimal number to be displayed on 4-digit 7-segment display
+        -- 15 to 12 is life, and 7 to 0 is score
         
-        life_counter : in unsigned(3 downto 0);
-        score_counter : in unsigned(7 downto 0)
+        anode : out std_logic_vector(3 downto 0); -- 4 anode signals
+        cathode : out std_logic_vector(0 to 6) -- Cathode patterns of 7-segment display
     );
 end sev_seg;
 
 architecture Behavioral of sev_seg is
-    signal led_bcd : std_logic_vector (3 downto 0);
-    signal refresh_counter : std_logic_vector (19 downto 0) := (others => '0');
-    signal led_activating_counter : std_logic_vector(1 downto 0);
-
-    signal internal_anode : std_logic_vector (3 downto 0);
+    signal led_bcd : unsigned(3 downto 0);
+    signal refresh_counter : std_logic_vector(19 downto 0); -- creating 10.5ms refresh period
+    signal led_activating_counter : std_logic_vector(1 downto 0); -- 2-bits for creating 4 LED-activating signals
 
 begin
-    -- Updated process for BCD to 7-segment decoder
-    process (led_bcd, life_counter, score_counter)
+    -- VHDL code for BCD to 7-segment decoder
+    -- Cathode patterns of the 7-segment LED display
+    process (led_bcd)
     begin
         case led_bcd is
-            when "0000" => null; 
+            when "0000" => cathode <= "0000001"; -- "0"
             when "0001" => cathode <= "1001111"; -- "1"
             when "0010" => cathode <= "0010010"; -- "2"
             when "0011" => cathode <= "0000110"; -- "3"
@@ -45,6 +47,17 @@ begin
         end case;
     end process;
 
+    -- 7-segment display controller
+    -- generate refresh period of 10.5ms
+    process (clk, rst)
+    begin
+        if (rst = '1') then
+            refresh_counter <= (others => '0');
+        elsif (rising_edge(clk)) then
+            refresh_counter <= refresh_counter + 1;
+        end if;
+    end process;
+
     led_activating_counter <= refresh_counter(19 downto 18);
 
     -- 4-to-1 MUX to generate anode activating signals for 4 LEDs
@@ -52,24 +65,22 @@ begin
     begin
         case led_activating_counter is
             when "00" =>
-                internal_anode <= "0111"; -- activate LED1 and Deactivate LED2, LED3, LED4
-                led_bcd <= std_logic_vector(life_counter); -- the first hex digit
-
+                anode <= "0111"; -- activate LED1 and Deactivate LED2, LED3, LED4
+                led_bcd <= din(15 downto 12); -- the first hex digit of the 16-bit number
+            when "01" =>
+                anode <= "1011"; -- activate LED2 and Deactivate LED1, LED3, LED4
+                led_bcd <= din(11 downto 8); -- the second hex digit of the 16-bit number
             when "10" =>
-                internal_anode <= "1101"; -- activate LED3 and Deactivate LED2, LED1, LED4
-                led_bcd <= std_logic_vector(score_counter(7 downto 4)); -- the third hex
-
+                anode <= "1101"; -- activate LED3 and Deactivate LED2, LED1, LED4
+                led_bcd <= din(7 downto 4); -- the third hex digit of the 16-bit number
             when "11" =>
-                internal_anode <= "1110"; -- activate LED4 and Deactivate LED2, LED3, LED1
-                led_bcd <= std_logic_vector(score_counter(3 downto 0)); -- the fourth hex
-
+                anode <= "1110"; -- activate LED4 and Deactivate LED2, LED3, LED1
+                led_bcd <= din(3 downto 0); -- the fourth hex digit of the 16-bit number
             when others =>
-                internal_anode <= "1111"; -- Deactivate all LEDs
+                anode <= "1111"; -- Deactivate all LEDs
                 led_bcd <= "1111"; -- OFF
         end case;
     end process;
 
-    -- Map internal_anode to external anode
-    anode <= internal_anode;
 
 end Behavioral;
