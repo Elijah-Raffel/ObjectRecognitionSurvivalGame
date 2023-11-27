@@ -101,7 +101,8 @@ signal proj14: std_logic_vector (11 downto 0) := x"D0C";
 signal time_cntr: unsigned (24 downto 0) := to_unsigned(0, 25);
 signal rand_cntr: unsigned (7 downto 0) := to_unsigned(17, 8);
 signal quart_sec: std_logic;
-signal coin_score: unsigned (7 downto 0) := to_unsigned(0, 8); -- keeps count of the number of coins collected
+--signal coin_score: unsigned (7 downto 0) := to_unsigned(0, 8); -- keeps count of the number of coins collected
+signal coin_score: unsigned (7 downto 0) := to_unsigned(13, 8); -- need to fix counting score since its broken
 
 signal proj_enable: std_logic_vector (15 downto 0) := x"0000";
 
@@ -311,7 +312,7 @@ process (coin_collected) is
         coin_pos_vec (3 downto 0) <= std_logic_vector(inter_val (3 downto 0)) XOR "0001";
     end if;
     
-    coin_score <= coin_score + 1;
+--    coin_score <= coin_score + 1;
     
 end process;
 
