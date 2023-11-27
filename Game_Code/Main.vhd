@@ -226,10 +226,8 @@ begin
     if rising_edge(clk) then
         if(clk_cycles = 0) then
             twenty_five_mhz_clk <= not twenty_five_mhz_clk;
-            clk_cycles <= clk_cycles+1;
-        else
-            clk_cycles <= clk_cycles+1;
         end if;
+        clk_cycles <= clk_cycles+1;
     end if;
 end process;
 
