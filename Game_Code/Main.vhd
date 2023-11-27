@@ -8,13 +8,17 @@ entity Main is
   port (
     -- Main Clock (100 MHz)
     clk         : in std_logic;
+           
+    an  : out std_logic_vector(3 downto 0);
+    seg : out std_logic_vector(0 to 6)
  
     -- UART Data
     i_UART_RX : in  std_logic;
     --o_UART_TX : out std_logic;
     
     -- led
-    led : out std_logic_vector(15 downto 0) -- keeping track of score with led 15-8 for now untilandy is done w/ 7seg
+    
+    --led : out std_logic_vector(15 downto 0) -- keeping track of score with led 15-8 for now untilandy is done w/ 7seg
   );
 end entity Main;
  
