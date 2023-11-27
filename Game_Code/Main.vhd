@@ -70,7 +70,7 @@ component Collision
            proj_14 : in STD_LOGIC_VECTOR (7 downto 0));
 end component;
 
-component Seven_Seg
+component sev_seg
     Port ( clk : in std_logic;
            anode : out std_logic_vector (3 downto 0);
            cathode : out std_logic_vector (6 downto 0);
@@ -175,7 +175,7 @@ begin
         proj_14 => proj14
     );
     
-    SevenSeg_Inst : Seven_Seg port map(
+    SevenSeg_Inst : sev_seg port map(
         clk => clk,
         score_counter => score,
         life_counter => life,
