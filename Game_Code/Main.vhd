@@ -8,17 +8,18 @@ entity Main is
   port (
     -- Main Clock (100 MHz)
     clk         : in std_logic;
-           
+    reset       : in std_logic;
+    
+    -- Seven Seg Display     
     an  : out std_logic_vector(3 downto 0);
-    seg : out std_logic_vector(0 to 6)
+    seg : out std_logic_vector(0 to 6);
  
     -- UART Data
     i_UART_RX : in  std_logic;
     --o_UART_TX : out std_logic;
     
     -- led
-    
-    --led : out std_logic_vector(15 downto 0) -- keeping track of score with led 15-8 for now untilandy is done w/ 7seg
+    led : out std_logic_vector(15 downto 0) -- keeping track of score with led 15-8 for now untilandy is done w/ 7seg
   );
 end entity Main;
  
@@ -74,13 +75,16 @@ component Collision
            proj_14 : in STD_LOGIC_VECTOR (7 downto 0));
 end component;
 
-component sev_seg
+component sev_seg is 
     Port ( clk : in std_logic;
-           anode : out std_logic_vector (3 downto 0);
-           cathode : out std_logic_vector (6 downto 0);
-        
+           rst : in std_logic;
+            
            life_counter : in unsigned(3 downto 0);
-           score_counter : in unsigned(7 downto 0));
+           score_counter : in unsigned(7 downto 0);
+            
+           anode : out std_logic_vector(3 downto 0);
+           cathode : out std_logic_vector(0 to 6)
+        );
 end component;
  
     signal w_RX_DV     : std_logic;
@@ -116,9 +120,6 @@ end component;
     
     signal score: unsigned (7 downto 0);  
     signal life: unsigned (3 downto 0);
-    
-    signal an : std_logic_vector (3 downto 0);
-    signal seg : std_logic_vector (6 downto 0);
     
     signal twenty_five_mhz_clk : std_logic := '0';
     signal clk_cycles: unsigned (1 downto 0) := to_unsigned(0, 2);
@@ -184,8 +185,11 @@ begin
     
     SevenSeg_Inst : sev_seg port map(
         clk => clk,
+        rst => reset,
+        
+        life_counter => life,     
         score_counter => score,
-        life_counter => life,
+        
         anode => an,
         cathode => seg
     );

@@ -1,3 +1,6 @@
+-- Modified from fpga4student.com
+-- VHDL code for seven-segment display on Basys 3 FPGA
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
@@ -8,8 +11,9 @@ entity sev_seg is
     port (
         clk : in std_logic; -- Clock on Basys 3 FPGA board
         rst : in std_logic; -- Reset
-        din : in unsigned(15 downto 0); -- Hexadecimal number to be displayed on 4-digit 7-segment display
-        -- 15 to 12 is life, and 7 to 0 is score
+        
+        life_counter : in unsigned(3 downto 0);
+        score_counter : in unsigned(7 downto 0);
         
         anode : out std_logic_vector(3 downto 0); -- 4 anode signals
         cathode : out std_logic_vector(0 to 6) -- Cathode patterns of 7-segment display
@@ -17,11 +21,15 @@ entity sev_seg is
 end sev_seg;
 
 architecture Behavioral of sev_seg is
+    signal display : unsigned(15 downto 0);
     signal led_bcd : unsigned(3 downto 0);
     signal refresh_counter : std_logic_vector(19 downto 0); -- creating 10.5ms refresh period
     signal led_activating_counter : std_logic_vector(1 downto 0); -- 2-bits for creating 4 LED-activating signals
 
 begin
+    display(15 downto 12) <= life_counter(3 downto 0);
+    display(7 downto 0) <= score_counter(7 downto 0);
+    
     -- VHDL code for BCD to 7-segment decoder
     -- Cathode patterns of the 7-segment LED display
     process (led_bcd)
@@ -66,16 +74,16 @@ begin
         case led_activating_counter is
             when "00" =>
                 anode <= "0111"; -- activate LED1 and Deactivate LED2, LED3, LED4
-                led_bcd <= din(15 downto 12); -- the first hex digit of the 16-bit number
+                led_bcd <= display(15 downto 12); -- the first hex digit of the 16-bit number
             when "01" =>
                 anode <= "1011"; -- activate LED2 and Deactivate LED1, LED3, LED4
-                led_bcd <= din(11 downto 8); -- the second hex digit of the 16-bit number
+                led_bcd <= display(11 downto 8); -- the second hex digit of the 16-bit number
             when "10" =>
                 anode <= "1101"; -- activate LED3 and Deactivate LED2, LED1, LED4
-                led_bcd <= din(7 downto 4); -- the third hex digit of the 16-bit number
+                led_bcd <= display(7 downto 4); -- the third hex digit of the 16-bit number
             when "11" =>
                 anode <= "1110"; -- activate LED4 and Deactivate LED2, LED3, LED1
-                led_bcd <= din(3 downto 0); -- the fourth hex digit of the 16-bit number
+                led_bcd <= display(3 downto 0); -- the fourth hex digit of the 16-bit number
             when others =>
                 anode <= "1111"; -- Deactivate all LEDs
                 led_bcd <= "1111"; -- OFF
