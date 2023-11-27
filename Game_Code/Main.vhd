@@ -116,6 +116,9 @@ end component;
     signal an : std_logic_vector (3 downto 0);
     signal seg : std_logic_vector (6 downto 0);
     
+    signal twenty_five_mhz_clk : std_logic := '0';
+    signal clk_cycles: unsigned (1 downto 0) := to_unsigned(0, 2);
+    
 begin
  
   UART_RX_Inst : entity work.UART_RX
@@ -217,6 +220,20 @@ begin
         player_dir <= w_RX_byte; -- taking WASD string and inputting into move_box
     end if;
 end process;
+
+clock_div: process (clk)
+begin
+    if rising_edge(clk) then
+        if(clk_cycles = 0) then
+            twenty_five_mhz_clk <= not twenty_five_mhz_clk;
+            clk_cycles <= clk_cycles+1;
+        else
+            clk_cycles <= clk_cycles+1;
+        end if;
+    end if;
+end process;
+
+
 
 led (15 downto 8) <= std_logic_vector(score); -- this just outputs the current score in bit form to the leds
 
