@@ -112,5 +112,5 @@ begin
     
     -- Update signals at the end of the process
     life_counter <= life_count;
-    
+  
 end Behavioral;

@@ -20,7 +20,7 @@ entity sev_seg is
     );
 end sev_seg;
 
-architecture Behavioral of sev_seg is
+ architecture Behavioral of sev_seg is
     signal display : unsigned(15 downto 0);
     signal led_bcd : unsigned(3 downto 0);
     signal refresh_counter : std_logic_vector(19 downto 0); -- creating 10.5ms refresh period
