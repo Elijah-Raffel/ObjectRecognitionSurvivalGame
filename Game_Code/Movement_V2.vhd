@@ -389,13 +389,17 @@ end process;
     
 --end process;
 
-process (coin_score)
+process (coin_score, rst)
 begin
-    for i in 0 to 13 loop
-        if(i < coin_score) then
-            proj_enable(i) <= '1';
-        end if;
-    end loop;
+    if (rst = '1') then
+        proj_enable <= x"0000";
+    else
+        for i in 0 to 13 loop
+            if(i < coin_score) then
+                proj_enable(i) <= '1';
+            end if;
+        end loop;
+    end if;
 end process;
 
 player_pos <= player_pos_vec;

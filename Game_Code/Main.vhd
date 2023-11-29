@@ -164,7 +164,9 @@ end component;
     signal clk_cycles: unsigned (1 downto 0) := to_unsigned(0, 2);
     
     signal new_game: std_logic;
-    signal dead:  std_logic;
+    signal dead: std_logic;
+    
+    signal mov_timer: unsigned (24 downto 0) := to_unsigned(0, 25);
     
 begin
  
@@ -179,6 +181,7 @@ begin
       
     MOVE_BOX: Movement_V2 port map(
         clk => clk,
+--        rst => reset,
         rst => new_game,
         player_in => player_dir,
         coin_collected => coin_collected,
@@ -206,6 +209,7 @@ begin
     
     Collision_Inst : Collision port map (
         clk => clk,
+--        rst => reset,
         rst => new_game,
         projectile_collision => projectile_collision,
         coin_collected => coin_collected, 
@@ -303,9 +307,11 @@ begin
 --  -- Drive UART line high when transmitter is not active
 --  o_UART_TX <= w_TX_Serial when w_TX_Active = '1' else '1';
 
-player_move_input: process (w_RX_DV)
+player_move_input: process (w_RX_DV, new_game)
 begin
-    if w_RX_DV = '1' then
+    if (new_game = '1') then
+        player_dir <= x"20";
+    elsif w_RX_DV = '1' then
         player_dir <= w_RX_byte; -- taking WASD string and inputting into move_box
     end if;
 end process;
@@ -317,11 +323,18 @@ begin
             twenty_five_mhz_clk <= not twenty_five_mhz_clk;
         end if;
         clk_cycles <= clk_cycles+1;
-    end if;
-    if (life = 0) then
-        dead <= '1';
-    else 
-        dead <= '0';
+        
+        mov_timer <= mov_timer + 1;
+        
+        if (mov_timer = to_unsigned(100*1000*1000, mov_timer'length)) then
+            mov_timer <= to_unsigned(0, mov_timer'length);
+            if( life = 0) then
+                dead <= '1';
+            else
+                dead <= '0';
+            end if;            
+        end if;
+        
     end if;
 end process;
 
