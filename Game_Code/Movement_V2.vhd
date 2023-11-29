@@ -58,10 +58,10 @@ end Movement_V2;
 
 architecture Behavioral of Movement_V2 is
 
-constant W : std_logic_vector (7 downto 0) := x"57";
-constant A : std_logic_vector (7 downto 0) := x"41";
-constant S : std_logic_vector (7 downto 0) := x"53";
-constant D : std_logic_vector (7 downto 0) := x"44";
+constant W : std_logic_vector (7 downto 0) := x"73";
+constant A : std_logic_vector (7 downto 0) := x"61";
+constant S : std_logic_vector (7 downto 0) := x"77";
+constant D : std_logic_vector (7 downto 0) := x"64";
 
 constant pos_move : std_logic_vector (1 downto 0) := "11";
 constant neg_move : std_logic_vector (1 downto 0) := "00";
@@ -248,55 +248,39 @@ begin
          proj14<= x"D0C";        
 --    elsif (quart_sec = '1') then
       elsif (rising_edge (quart_sec)) then
---        if (coin_collected = '1') then
---            coin_score <= coin_score + 1;
---        end if;
---        if( already_scored = '1' ) then 
---            already_scored <= '0';
---        end if;
     -- we update positions here every quarter of a second
         case player_in is
---                when x"77" => -- ascii for W: MOVE UP
-                when x"73" =>
---                    movement_pos <= std_logic_vector(unsigned(bram_out(3 downto 0)) + 1);
+--                when x"77" => 
+                when W => -- ascii for W: MOVE UP
                     movement_pos := unsigned(player_pos_vec (3 downto 0)) + 1;
                     if (movement_pos /= 15) then
                         player_pos_vec (3 downto 0) <= std_logic_vector(movement_pos);
                     else
                         player_pos_vec <= player_pos_vec;                        
                     end if;
-                    null;
-                when x"61" => -- ascii for A: MOVE LEFT
---                    movement_pos <= std_logic_vector(unsigned(bram_out(7 downto 4)) - 1);
+                when A => -- ascii for A: MOVE LEFT
                     movement_pos := unsigned(player_pos_vec (7 downto 4)) - 1;
                     if (movement_pos /= 0) then
                         player_pos_vec (7 downto 4) <= std_logic_vector(movement_pos);
                     else
                         player_pos_vec <= player_pos_vec;  
                     end if;
-                    null;
---                when x"73" => -- ascii for S: MOVE DOWN
-                when x"77" =>     
---                    movement_pos <= std_logic_vector(unsigned(bram_out(3 downto 0)) - 1);
+                when S =>     
                     movement_pos := unsigned(player_pos_vec (3 downto 0)) - 1;
                     if (movement_pos /= 0) then
                         player_pos_vec (3 downto 0) <= std_logic_vector(movement_pos);
                     else
                         player_pos_vec <= player_pos_vec;                        
                     end if;
-                    null;
-                when x"64" => --ascii for D: MOVE RIGHT
---                    movement_pos <= std_logic_vector(unsigned(bram_out(7 downto 4)) + 1);
+                when D => --ascii for D: MOVE RIGHT
                     movement_pos := unsigned(player_pos_vec (7 downto 4)) + 1;
                     if (movement_pos /= 15) then
                         player_pos_vec (7 downto 4) <= std_logic_vector(movement_pos);
                     else
                         player_pos_vec <= player_pos_vec;  
                     end if;
-                    null;
                 when others =>
-                    null;
-                    
+                    null;             
         end case; 
         
         if proj_enable(0) = '1' then
