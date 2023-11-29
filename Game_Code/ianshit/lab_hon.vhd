@@ -168,69 +168,70 @@ begin
             din_s <= "000000000000";
         end if;
          -- Update Coin position 
-        if (unsigned(h_mem_index) = (unsigned(coin_pos(7 downto 4)) + 2) and v_mem_index = coin_pos(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(coin_pos(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(coin_pos(7 downto 4)) +2) = "0000")) and (v_mem_index = coin_pos(3 downto 0))) then
             din_s <= green_all; 
             end if;
         -- Update player position 
-        if(unsigned(h_mem_index) = (unsigned(player_pos(7 downto 4)) + 2) and v_mem_index = player_pos(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(player_pos(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(player_pos(7 downto 4)) +2) = "0000")) and (v_mem_index = player_pos(3 downto 0))) then
             din_s <= blue_all;
             end if; 
         -- Update Proj 1 - 14    
-        if(unsigned(h_mem_index) = (unsigned(proj_1(7 downto 4)) + 2) and v_mem_index = proj_1(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_1(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_1(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_1(3 downto 0))) then
             din_s <= red_all;
             end if;
         -- Proj 2  
-        if(unsigned(h_mem_index) = (unsigned(proj_2(7 downto 4)) + 2) and v_mem_index = proj_2(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_2(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_2(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_2(3 downto 0))) then
             din_s <= red_all;
             end if;
         -- Proj 3
-        if(unsigned(h_mem_index) = (unsigned(proj_3(7 downto 4)) + 2) and v_mem_index = proj_3(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_3(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_3(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_3(3 downto 0))) then
             din_s <= red_all;
             end if;
         -- Proj 4
-        if(unsigned(h_mem_index) = (unsigned(proj_4(7 downto 4)) + 2) and v_mem_index = proj_4(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_4(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_4(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_4(3 downto 0))) then
             din_s <= red_all;
             end if;
         -- Proj 5
-        if(unsigned(h_mem_index) = (unsigned(proj_5(7 downto 4)) + 2) and v_mem_index = proj_5(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_5(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_5(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_5(3 downto 0))) then
             din_s <= red_all;
             end if;
         -- Proj 6 
-        if(unsigned(h_mem_index) = (unsigned(proj_6(7 downto 4)) + 2) and v_mem_index = proj_6(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_6(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_6(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_6(3 downto 0))) then
             din_s <= red_all;
             end if;
         -- Proj 7
-        if(unsigned(h_mem_index) = (unsigned(proj_7(7 downto 4)) + 2) and v_mem_index = proj_7(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_7(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_7(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_7(3 downto 0))) then
             din_s <= red_all;
             end if;
         -- Proj 8
-        if(unsigned(h_mem_index) = (unsigned(proj_8(7 downto 4)) + 2) and v_mem_index = proj_8(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_8(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_8(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_8(3 downto 0))) then
             din_s <= red_all;
        end if; 
         -- Proj 9
-        if(unsigned(h_mem_index) = (unsigned(proj_9(7 downto 4)) + 2) and v_mem_index = proj_9(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_9(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_9(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_9(3 downto 0))) then
             din_s <= red_all;
         end if;
         -- Proj 10
-        if(unsigned(h_mem_index) = (unsigned(proj_10(7 downto 4)) + 2) and v_mem_index = proj_10(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_10(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_10(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_10(3 downto 0))) then
             din_s <= red_all;
         end if;
         -- Proj 11
-        if(unsigned(h_mem_index) = (unsigned(proj_11(7 downto 4)) + 2) and v_mem_index = proj_11(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_11(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_11(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_11(3 downto 0))) then
             din_s <= red_all;
         end if;
         -- Proj 12
-        if(unsigned(h_mem_index) = (unsigned(proj_12(7 downto 4)) + 2) and v_mem_index = proj_12(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_12(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_12(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_12(3 downto 0))) then
             din_s <= red_all;
         end if;
         -- Proj 13
-        if(unsigned(h_mem_index) = (unsigned(proj_13(7 downto 4)) + 2) and v_mem_index = proj_13(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_13(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_13(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_13(3 downto 0))) then
             din_s <= red_all;
         end if;
         -- Proj 14
-        if(unsigned(h_mem_index) = (unsigned(proj_14(7 downto 4)) + 2) and v_mem_index = proj_14(3 downto 0)) then
+        if (((unsigned(h_mem_index) = (unsigned(proj_14(7 downto 4)) +2)) or (h_mem_index(4) = '1' and (unsigned(proj_14(7 downto 4)) +2) = "0000")) and (v_mem_index = proj_14(3 downto 0))) then
             din_s <= red_all;
         end if;
+        
         else
             din_s <= "111100001111"; 
     end if;

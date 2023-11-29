@@ -7,9 +7,9 @@ import os
 import time
 
 train = False
-takePics = not False
-test = False
-print = False
+takePics = False
+test = not False
+print = not False
 
 if takePics:
     labels = ["up", "right", "down", "left", "fist"]
