@@ -34,6 +34,7 @@ use ieee.numeric_std.all;
 
 entity Movement_V2 is
     Port ( clk : in STD_LOGIC;
+           rst: in std_logic;
            player_in : in STD_LOGIC_VECTOR (7 downto 0);
            coin_collected : in STD_LOGIC;
            score_cnt : out unsigned (7 downto 0);
@@ -65,8 +66,8 @@ constant D : std_logic_vector (7 downto 0) := x"44";
 constant pos_move : std_logic_vector (1 downto 0) := "11";
 constant neg_move : std_logic_vector (1 downto 0) := "00";
 
-signal player_pos_vec: std_logic_vector (7 downto 0) := "00011000"; --player starts at (1,4)
-signal coin_pos_vec: std_logic_vector (7 downto 0) := "10010100"; -- initial coin_pos is  (5, 4)
+signal player_pos_vec: std_logic_vector (7 downto 0) := "00011000"; --player starts at (1,8)
+signal coin_pos_vec: std_logic_vector (7 downto 0) := "10111000"; -- initial coin_pos is  (5, 4)
 
 --Below are the starting default values for the positions of projects
 --format of vector is by bits:
@@ -101,8 +102,9 @@ signal proj14: std_logic_vector (11 downto 0) := x"D0C";
 signal time_cntr: unsigned (24 downto 0) := to_unsigned(0, 25);
 signal rand_cntr: unsigned (7 downto 0) := to_unsigned(17, 8);
 signal quart_sec: std_logic;
---signal coin_score: unsigned (7 downto 0) := to_unsigned(0, 8); -- keeps count of the number of coins collected
-signal coin_score: unsigned (7 downto 0) := to_unsigned(13, 8); -- need to fix counting score since its broken
+signal coin_score: unsigned (7 downto 0) := to_unsigned(0, 8); -- keeps count of the number of coins collected
+signal already_scored: std_logic := '0';
+--signal coin_score: unsigned (7 downto 0) := to_unsigned(13, 8); -- need to fix counting score since its broken
 
 signal proj_enable: std_logic_vector (15 downto 0) := x"0000";
 
@@ -170,29 +172,92 @@ function update_proj(proj_vec: std_logic_vector (11 downto 0);
 
 begin
 
-process (clk) begin
-    if rising_edge(clk) then
-        if (time_cntr = to_unsigned(25*1000*1000, time_cntr'length)) then -- this is 1/4 second (250ms)
+process (clk, rst) 
+    variable inter_val: unsigned (7 downto 0);
+    variable temp: integer;
+begin
+    if (rst = '1') then
+        quart_sec <= '0';
+        time_cntr <= to_unsigned(0, time_cntr'length);
+        rand_cntr <= to_unsigned(0, rand_cntr'length);
+        already_scored <= '0';
+        coin_score <= to_unsigned(0, coin_score'length);
+        coin_pos_vec <= x"A8";
+    elsif rising_edge(clk) then
+    if (time_cntr = to_unsigned(100*1000*1000, time_cntr'length)) then -- this is 1/4 second (250ms)
+--        if (time_cntr = to_unsigned(25*1000*1000, time_cntr'length)) then -- this is 1/4 second (250ms)
 --          if (time_cntr = to_unsigned(25*1000, time_cntr'length)) then -- this is 1/4000 second (250us)
             quart_sec <= '1';
             time_cntr <= to_unsigned(0, time_cntr'length);
             rand_cntr <= rand_cntr + 29;  
+            already_scored <= '0';
         else
             quart_sec <= '0';
             time_cntr <= time_cntr + 1;
             rand_cntr <= rand_cntr + 1;     
+            if (coin_collected = '1' and already_scored = '0') then
+                coin_score <= coin_score + 1;
+                already_scored <= '1';
+                                --    temp := time_cntr mod 256;
+                --    inter_val := to_unsigned(time_cntr mod 256, inter_val'length);
+                --    inter_val := time_cntr (7 downto 0);
+                    inter_val := rand_cntr (7 downto 0);
+                --    coin_pos <= std_logic_vector(time_cntr mod 256);
+                --    coin_pos_vec <= std_logic_vector(time_cntr (7 downto 0));
+                    coin_pos_vec <= std_logic_vector(inter_val);
+                    -- below if statements check if the coin is in proper bounds
+                    if inter_val (7 downto 4) = 15 or inter_val (7 downto 4) = 0 then
+                --        inter_val (7 downto 4) := to_unsigned(std_logic_vector(inter_val (7 downto 4)) XOR "0001");
+                        coin_pos_vec (7 downto 4) <= std_logic_vector(inter_val (7 downto 4)) XOR "0001";
+                    end if; 
+                    
+                    if inter_val (3 downto 0) = 15 or inter_val (3 downto 0) = 0 then
+                        coin_pos_vec (3 downto 0) <= std_logic_vector(inter_val (3 downto 0)) XOR "0001";
+                    end if;
+                        
+            end if;            
         end if;
+        
+
         
     end if;
 end process;
 
-process (quart_sec)
+process (quart_sec, rst)
 variable movement_pos: unsigned (3 downto 0);
 begin
-    if (quart_sec = '1') then
+    if (rst = '1') then
+        player_pos_vec <= x"18";
+        -- top spawn
+        proj1 <= x"C1F";
+        proj2 <= x"85F";
+         proj3<= x"C9F";
+         proj4<= x"0DF";
+       --bot sp
+         proj5<= x"0FD";
+         proj6<= x"2F9";
+         proj7<= x"3F5";
+         proj8<= x"0F1";
+        --left 
+         proj9<= x"3C0";
+         proj10<= x"780";
+         proj11<= x"F40";
+         proj12<= x"F04";
+         -- rig
+         proj13<= x"C08";
+         proj14<= x"D0C";        
+--    elsif (quart_sec = '1') then
+      elsif (rising_edge (quart_sec)) then
+--        if (coin_collected = '1') then
+--            coin_score <= coin_score + 1;
+--        end if;
+--        if( already_scored = '1' ) then 
+--            already_scored <= '0';
+--        end if;
     -- we update positions here every quarter of a second
         case player_in is
-                when x"57" => -- ascii for W: MOVE UP
+--                when x"77" => -- ascii for W: MOVE UP
+                when x"73" =>
 --                    movement_pos <= std_logic_vector(unsigned(bram_out(3 downto 0)) + 1);
                     movement_pos := unsigned(player_pos_vec (3 downto 0)) + 1;
                     if (movement_pos /= 15) then
@@ -201,7 +266,7 @@ begin
                         player_pos_vec <= player_pos_vec;                        
                     end if;
                     null;
-                when x"41" => -- ascii for A: MOVE LEFT
+                when x"61" => -- ascii for A: MOVE LEFT
 --                    movement_pos <= std_logic_vector(unsigned(bram_out(7 downto 4)) - 1);
                     movement_pos := unsigned(player_pos_vec (7 downto 4)) - 1;
                     if (movement_pos /= 0) then
@@ -210,7 +275,8 @@ begin
                         player_pos_vec <= player_pos_vec;  
                     end if;
                     null;
-                when x"53" => -- ascii for S: MOVE DOWN     
+--                when x"73" => -- ascii for S: MOVE DOWN
+                when x"77" =>     
 --                    movement_pos <= std_logic_vector(unsigned(bram_out(3 downto 0)) - 1);
                     movement_pos := unsigned(player_pos_vec (3 downto 0)) - 1;
                     if (movement_pos /= 0) then
@@ -219,7 +285,7 @@ begin
                         player_pos_vec <= player_pos_vec;                        
                     end if;
                     null;
-                when x"44" => --ascii for D: MOVE RIGHT
+                when x"64" => --ascii for D: MOVE RIGHT
 --                    movement_pos <= std_logic_vector(unsigned(bram_out(7 downto 4)) + 1);
                     movement_pos := unsigned(player_pos_vec (7 downto 4)) + 1;
                     if (movement_pos /= 15) then
@@ -292,29 +358,36 @@ begin
     end if;
 end process;
 
-process (coin_collected) is
-    variable inter_val: unsigned (7 downto 0);
-    variable temp: integer;
-    begin
---    temp := time_cntr mod 256;
---    inter_val := to_unsigned(time_cntr mod 256, inter_val'length);
-    inter_val := time_cntr (7 downto 0);
+--process (coin_collected, rst) is
+--    variable inter_val: unsigned (7 downto 0);
+--    variable temp: integer;
+--    begin
+--    if( rst = '1') then
+--        coin_pos_vec <= x"A8";
+--    else
+--        if (already_scored = '0') then
+--        --    temp := time_cntr mod 256;
+--        --    inter_val := to_unsigned(time_cntr mod 256, inter_val'length);
+--        --    inter_val := time_cntr (7 downto 0);
+--            inter_val := rand_cntr (7 downto 0);
+--        --    coin_pos <= std_logic_vector(time_cntr mod 256);
+--        --    coin_pos_vec <= std_logic_vector(time_cntr (7 downto 0));
+--            coin_pos_vec <= std_logic_vector(inter_val);
+--            -- below if statements check if the coin is in proper bounds
+--            if inter_val (7 downto 4) = 15 or inter_val (7 downto 4) = 0 then
+--        --        inter_val (7 downto 4) := to_unsigned(std_logic_vector(inter_val (7 downto 4)) XOR "0001");
+--                coin_pos_vec (7 downto 4) <= std_logic_vector(inter_val (7 downto 4)) XOR "0001";
+--            end if; 
+            
+--            if inter_val (3 downto 0) = 15 or inter_val (3 downto 0) = 0 then
+--                coin_pos_vec (3 downto 0) <= std_logic_vector(inter_val (3 downto 0)) XOR "0001";
+--            end if;
+            
+--        end if;
+--    end if;
+----    coin_score <= coin_score + 1;
     
---    coin_pos <= std_logic_vector(time_cntr mod 256);
-    coin_pos_vec <= std_logic_vector(time_cntr (7 downto 0));
-    -- below if statements check if the coin is in proper bounds
-    if inter_val (7 downto 4) = 15 or inter_val (7 downto 4) = 0 then
---        inter_val (7 downto 4) := to_unsigned(std_logic_vector(inter_val (7 downto 4)) XOR "0001");
-        coin_pos_vec (7 downto 4) <= std_logic_vector(inter_val (7 downto 4)) XOR "0001";
-    end if;
-    
-    if inter_val (3 downto 0) = 15 or inter_val (3 downto 0) = 0 then
-        coin_pos_vec (3 downto 0) <= std_logic_vector(inter_val (3 downto 0)) XOR "0001";
-    end if;
-    
---    coin_score <= coin_score + 1;
-    
-end process;
+--end process;
 
 process (coin_score)
 begin
@@ -326,7 +399,9 @@ begin
 end process;
 
 player_pos <= player_pos_vec;
+--player_pos <= x"18";
 coin_pos <= coin_pos_vec;
+--coin_pos <= x"74";
 proj_1 <= proj1 (7 downto 0);
 proj_2 <= proj2 (7 downto 0);
 proj_3 <= proj3 (7 downto 0);

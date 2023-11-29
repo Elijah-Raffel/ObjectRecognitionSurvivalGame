@@ -9,6 +9,7 @@ entity Main is
     -- Main Clock (100 MHz)
     clk         : in std_logic;
     reset       : in std_logic;
+    btnU        : in std_logic;
     
     -- Seven Seg Display     
     an  : out std_logic_vector(3 downto 0);
@@ -19,7 +20,13 @@ entity Main is
     --o_UART_TX : out std_logic;
     
     -- led
-    led : out std_logic_vector(15 downto 0) -- keeping track of score with led 15-8 for now untilandy is done w/ 7seg
+    led : out std_logic_vector(15 downto 0); -- keeping track of score with led 15-8 for now untilandy is done w/ 7seg
+    hsync : out std_logic;
+    vsync : out std_logic;
+    red   : out std_logic_vector(3 downto 0);
+    green : out std_logic_vector(3 downto 0);
+    blue  : out std_logic_vector(3 downto 0)
+    
   );
 end entity Main;
  
@@ -27,6 +34,7 @@ architecture RTL of Main is
 
 component Movement_V2 is
     Port ( clk : in STD_LOGIC;
+           rst: in std_logic;
            player_in : in STD_LOGIC_VECTOR (7 downto 0);
            coin_collected : in STD_LOGIC;
            score_cnt : out unsigned (7 downto 0);
@@ -52,6 +60,7 @@ end component;
 
 component Collision
     Port ( clk : in STD_LOGIC;
+           rst : in std_logic;
            projectile_collision : out STD_LOGIC;
            coin_collected : out STD_LOGIC;
            life_counter : out unsigned (3 downto 0);
@@ -85,6 +94,36 @@ component sev_seg is
            anode : out std_logic_vector(3 downto 0);
            cathode : out std_logic_vector(0 to 6)
         );
+end component;
+
+component vga_main is
+  port (
+    clk   : in std_logic;
+    rst   : in std_logic;
+    --add each project, coin, and player as  input's
+        player_pos : in STD_LOGIC_VECTOR (7 downto 0);
+        coin_pos : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_1 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_2 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_3 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_4 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_5 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_6 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_7 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_8 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_9 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_10 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_11 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_12 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_13 : in STD_LOGIC_VECTOR (7 downto 0);
+        proj_14 : in STD_LOGIC_VECTOR (7 downto 0);  
+    -----
+    hsync : out std_logic;
+    vsync : out std_logic;
+    red   : out std_logic_vector(3 downto 0);
+    green : out std_logic_vector(3 downto 0);
+    blue  : out std_logic_vector(3 downto 0)
+  );
 end component;
  
     signal w_RX_DV     : std_logic;
@@ -137,8 +176,10 @@ begin
       
     MOVE_BOX: Movement_V2 port map(
         clk => clk,
+        rst => reset,
         player_in => player_dir,
         coin_collected => coin_collected,
+--        coin_collected => btnU,
         score_cnt => score,
         player_pos => player_pos,
         coin_pos => coin_pos,
@@ -160,12 +201,15 @@ begin
     
     Collision_Inst : Collision port map (
         clk => clk,
+        rst => reset,
         projectile_collision => projectile_collision,
         coin_collected => coin_collected, 
         life_counter => life,
 
         player_pos => player_pos,
+--        player_pos => x"3D",
         coin_pos => coin_pos,
+--        coin_pos => x"A8",        
 
         proj_1 => proj1,
         proj_2 => proj2,
@@ -193,11 +237,43 @@ begin
         anode => an,
         cathode => seg
     );
+    
+    vga_inst : vga_main port map (
+        clk => clk,
+        rst => reset,
+
+        player_pos => player_pos,
+--        player_pos => x"3D",
+        coin_pos => coin_pos,
+--        coin_pos => x"A8",        
+
+        proj_1 => proj1,
+        proj_2 => proj2,
+        proj_3 => proj3,
+        proj_4 => proj4,
+        proj_5 => proj5,
+        proj_6 => proj6,
+        proj_7 => proj7,
+        proj_8 => proj8,
+        proj_9 => proj9,
+        proj_10 => proj10,
+        proj_11 => proj11,
+        proj_12 => proj12,
+        proj_13 => proj13,
+        proj_14 => proj14,       
+        
+        hsync => hsync,
+        vsync => vsync,
+        red => red,
+        green => green,
+        blue => blue
+    );
  
   -- update leds when new data is taken in
       LED_Display_Process: process(w_RX_Byte)
   begin
-        led (7 downto 0) <= w_RX_Byte;
+--        led (7 downto 0) <= w_RX_Byte;
+--        player_dir <= w_RX_Byte;
   end process LED_Display_Process;       
  
  -- w = 0111 0111
@@ -240,8 +316,14 @@ begin
 end process;
 
 
+--led (15 downto 8) <= std_logic_vector(score); -- this just outputs the current score in bit form to the leds
+led (7 downto 0) <= coin_pos;
+--led (7 downto 0) <= player_dir;
+led (15 downto 8) <= player_pos (7 downto 0);
+--led (15) <= coin_collected;
 
-led (15 downto 8) <= std_logic_vector(score); -- this just outputs the current score in bit form to the leds
-
+process (coin_collected) begin
+    null;
+end process;
 
 end architecture RTL;

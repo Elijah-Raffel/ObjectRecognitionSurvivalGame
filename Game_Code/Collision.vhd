@@ -20,6 +20,7 @@ entity Collision is
 -- Left seven seg used for lives, Right two seven seg used for score.
 
     Port ( clk : in STD_LOGIC;
+        rst : in std_logic;
         projectile_collision : out STD_LOGIC;
         coin_collected : out STD_LOGIC;
         life_counter : out unsigned (3 downto 0);
@@ -83,18 +84,23 @@ begin
 
     -- Check for collision between coin_pos and player_pos
     coin_collision <= (coin_pos = player_pos);
-
+--    coin_collected <= std_logic(coin_pos = player_pos);
     -- Combine individual collision signals into an overall collision signal
     proj_collision <= proj1_collision or proj2_collision or proj3_collision or proj4_collision or
                       proj5_collision or proj6_collision or proj7_collision or proj8_collision or
                       proj9_collision or proj10_collision or proj11_collision or proj12_collision or
                       proj13_collision or proj14_collision;
     
-    process(clk)
+    process(clk, rst)
     begin
-        if rising_edge(clk) then
+        if (rst = '1') then
+            coin_collected <= '0';
+            life_count <= to_unsigned(0, life_count'length);
+            projectile_collision <= '0';
+        elsif rising_edge(clk) then
             -- Coin Collision Logic
             if coin_collision then
+--            if ( player_pos = coin_pos) then
                 coin_collected <= '1';  -- Signal that a coin is collected
             else
                 coin_collected <= '0';
