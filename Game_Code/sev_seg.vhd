@@ -76,7 +76,7 @@ begin
                 anode <= "0111"; -- activate LED1 and Deactivate LED2, LED3, LED4
                 led_bcd <= display(15 downto 12); -- the first hex digit of the 16-bit number
             when "01" =>
-                anode <= "1011"; -- activate LED2 and Deactivate LED1, LED3, LED4
+                anode <= "1111"; -- activate LED2 and Deactivate LED1, LED3, LED4
                 led_bcd <= display(11 downto 8); -- the second hex digit of the 16-bit number
             when "10" =>
                 anode <= "1101"; -- activate LED3 and Deactivate LED2, LED1, LED4
