@@ -1,6 +1,3 @@
-----------------------------------------------------------------------
--- File Downloaded from http://www.nandland.com
-----------------------------------------------------------------------
 -- This file contains the UART Receiver.  This receiver is able to
 -- receive 8 bits of serial data, one start bit, one stop bit,
 -- and no parity bit.  When receive is complete o_rx_dv will be
@@ -17,7 +14,7 @@ use ieee.numeric_std.all;
 
 entity UART_RX is
   generic (
-    g_CLKS_PER_BIT : integer := 868   -- Needs to be set correctly
+    g_CLKS_PER_BIT : integer := 868  
     );
   port (
     clk       : in  std_logic;
@@ -33,7 +30,7 @@ architecture RTL of UART_RX is
   type t_SM_Main is (s_Idle, s_RX_Start_Bit, s_RX_Data_Bits,
                      s_RX_Stop_Bit, s_Cleanup);
   signal r_SM_Main : t_SM_Main := s_Idle;
-  signal w_SM_Main : std_logic_vector(2 downto 0); -- for simulation only
+  signal w_SM_Main : std_logic_vector(2 downto 0); 
 
   signal r_Clk_Count : integer range 0 to g_CLKS_PER_BIT-1 := 0;
   signal r_Bit_Index : integer range 0 to 7 := 0;  -- 8 Bits Total
