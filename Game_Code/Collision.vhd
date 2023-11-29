@@ -48,8 +48,8 @@ end Collision;
 architecture Behavioral of Collision is
     signal proj_collision : BOOLEAN := FALSE;
     signal coin_collision : BOOLEAN := FALSE;
-    signal life_count: unsigned (3 downto 0) := to_unsigned(0, 4);
-
+--    signal life_count: unsigned (3 downto 0) := to_unsigned(0, 4);
+    signal life_count: unsigned (3 downto 0) := to_unsigned(3, 4);
     signal proj1_collision : BOOLEAN := FALSE;
     signal proj2_collision : BOOLEAN := FALSE;
     signal proj3_collision : BOOLEAN := FALSE;
@@ -95,7 +95,7 @@ begin
     begin
         if (rst = '1') then
             coin_collected <= '0';
-            life_count <= to_unsigned(0, life_count'length);
+            life_count <= to_unsigned(3, life_count'length);
             projectile_collision <= '0';
         elsif rising_edge(clk) then
             -- Coin Collision Logic

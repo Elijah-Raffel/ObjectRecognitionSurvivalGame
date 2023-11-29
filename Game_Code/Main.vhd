@@ -163,6 +163,9 @@ end component;
     signal twenty_five_mhz_clk : std_logic := '0';
     signal clk_cycles: unsigned (1 downto 0) := to_unsigned(0, 2);
     
+    signal new_game: std_logic;
+    signal dead:  std_logic;
+    
 begin
  
   UART_RX_Inst : entity work.UART_RX
@@ -176,7 +179,7 @@ begin
       
     MOVE_BOX: Movement_V2 port map(
         clk => clk,
-        rst => reset,
+        rst => new_game,
         player_in => player_dir,
         coin_collected => coin_collected,
 --        coin_collected => btnU,
@@ -199,9 +202,11 @@ begin
         proj_14 => proj14
     );
     
+    new_game <= dead or reset;
+    
     Collision_Inst : Collision port map (
         clk => clk,
-        rst => reset,
+        rst => new_game,
         projectile_collision => projectile_collision,
         coin_collected => coin_collected, 
         life_counter => life,
@@ -312,6 +317,11 @@ begin
             twenty_five_mhz_clk <= not twenty_five_mhz_clk;
         end if;
         clk_cycles <= clk_cycles+1;
+    end if;
+    if (life = 0) then
+        dead <= '1';
+    else 
+        dead <= '0';
     end if;
 end process;
 
